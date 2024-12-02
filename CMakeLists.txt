@@ -3,8 +3,16 @@ project(dsbandrepair)
 
 find_package(Geant4 REQUIRED)
 
-option(DOWNLOAD_GEOMETRY "Download geometry files" TRUE)
+set(CMAKE_CXX_STANDARD 20)           # Set C++ standard to C++20
+set(CMAKE_CXX_STANDARD_REQUIRED ON)  # Enforce the specified standard
+set(CMAKE_CXX_EXTENSIONS OFF)        # Disable compiler-specific extensions
+
+option(DEBUG "Compile in Debug mode" FALSE)
+option(DOWNLOAD_GEOMETRY "Download geometry files" FALSE)
 option(USE_MPI "Using MPI" FALSE)
+if (DEBUG)
+   set(CMAKE_BUILD_TYPE Debug)
+endif()
 if (USE_MPI)
   find_package(G4mpi REQUIRED)
 endif()

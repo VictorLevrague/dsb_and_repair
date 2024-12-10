@@ -33,6 +33,7 @@
 #include "G4Track.hh"
 #include "G4NavigationHistory.hh"
 #include "G4RunManager.hh"
+#include "global.hh"
 
 #ifdef USE_MPI
 #include "G4MPImanager.hh"
@@ -50,18 +51,18 @@ void PhysChemIO::CreateWaterMolecule(G4int electronicModif, G4int electronicLeve
                                     G4double /*energy*/,
                                     const G4Track* theIncomingTrack)
 {
-    //L.T. Anh:  to correct electronicLevel in G4DNAChemistryManager, 
+    //L.T. Anh:  to correct electronicLevel in G4DNAChemistryManager,
     //see in G4DNAChemistryManager::CreateWaterMolecule
-    electronicLevel = 4 - electronicLevel; 
+    electronicLevel = 4 - electronicLevel;
     //Rel pos
     G4ThreeVector relPos;
     auto touchable = theIncomingTrack->GetStep()->GetPreStepPoint()->GetTouchable();
     relPos = touchable->GetHistory()->GetTopTransform().TransformPoint(theIncomingTrack->GetPosition());
-    
+
     // Get the flag of the current volume
     G4int volumeFlag =(G4int)fSteppingAction->SetupVolumeFlag(
         theIncomingTrack->GetStep()->GetPreStepPoint()->GetPhysicalVolume()->GetName());
-    
+
     if(    volumeFlag == 161  // voxelStraight
         || volumeFlag == 162 // voxelRight
         || volumeFlag == 163 // voxelLeft
@@ -75,6 +76,8 @@ void PhysChemIO::CreateWaterMolecule(G4int electronicModif, G4int electronicLeve
     {
         // Get the volume copy number
         G4int volumeCpNum = touchable->GetCopyNumber();
+        std::string name = g_map_voxel2.find(volumeCpNum)->second;
+        G4int volumeFlag1 = FindVolumeFlag(name);
         //theIncomingTrack->GetStep()->GetPreStepPoint()->GetPhysicalVolume()->GetUserID();
 
         // Default flag values
@@ -102,7 +105,7 @@ void PhysChemIO::CreateWaterMolecule(G4int electronicModif, G4int electronicLeve
             eventId += g4MPI->GetEventsInMaster() + (rank-1)*g4MPI->GetEventsInSlave();
         }
 #endif
-        
+
         InfoForChemGeo aInfo;
         aInfo.fType = 1; // water=1
         aInfo.fState = G4double( electronicModif );
@@ -112,7 +115,7 @@ void PhysChemIO::CreateWaterMolecule(G4int electronicModif, G4int electronicLeve
         aInfo.fZ = theIncomingTrack->GetPosition().z()/nm;
         aInfo.fParentTrackID = G4double( theIncomingTrack->GetTrackID() );
         aInfo.fEventNumber = G4double(eventId);
-        aInfo.fVolume = G4double( volumeFlag );
+        aInfo.fVolume = G4double( volumeFlag1 );
         aInfo.fVolumeCopyNumber = G4double( volumeCpNum);
         aInfo.fMotherVolume = G4double( motherVolumeFlag );
         aInfo.fMotherVolumeCopyNumber = G4double( motherVolumeCpNum );
@@ -151,6 +154,8 @@ void PhysChemIO::CreateSolvatedElectron(const G4Track* theIncomingTrack, G4Three
         || volumeFlag == 265) // voxelDown2
     {
         G4int volumeCpNum = touchable->GetCopyNumber();
+        std::string name = g_map_voxel2.find(volumeCpNum)->second;
+        G4int volumeFlag1 = FindVolumeFlag(name);
 
         G4String motherVolumeName = "";
         G4int motherVolumeFlag = -1;
@@ -174,7 +179,7 @@ void PhysChemIO::CreateSolvatedElectron(const G4Track* theIncomingTrack, G4Three
             eventId += g4MPI->GetEventsInMaster() + (rank-1)*g4MPI->GetEventsInSlave();
         }
 #endif
-        
+
         InfoForChemGeo aInfo;
         aInfo.fType = 2; // / solvated electron=2
         aInfo.fState = -1; // no state for solvated electron
@@ -184,7 +189,7 @@ void PhysChemIO::CreateSolvatedElectron(const G4Track* theIncomingTrack, G4Three
         aInfo.fZ = pos.z()/nm;
         aInfo.fParentTrackID = G4double( theIncomingTrack->GetTrackID() );
         aInfo.fEventNumber = G4double(eventId);
-        aInfo.fVolume = G4double( volumeFlag );
+        aInfo.fVolume = G4double( volumeFlag1 );
         aInfo.fVolumeCopyNumber = G4double( volumeCpNum );
         aInfo.fMotherVolume = G4double( motherVolumeFlag );
         aInfo.fMotherVolumeCopyNumber = G4double( motherVolumeCpNum );
@@ -193,6 +198,56 @@ void PhysChemIO::CreateSolvatedElectron(const G4Track* theIncomingTrack, G4Three
         aInfo.fRelZ = relPos.z()/nm;
         PhysAnalysis::GetAnalysis()->AddInfoForChemGeo(aInfo);
     }
+}
+
+
+G4int PhysChemIO::FindVolumeFlag(std::string name)
+{
+  G4int volumeFlag = -1000;
+  if(name=="voxelStraight" || name=="VoxelStraight")
+    {
+      volumeFlag = 161;
+    }
+  else if(name=="voxelUp" || name=="VoxelUp")
+    {
+      volumeFlag = 164;
+    }
+  else if(name=="voxelDown" || name=="VoxelDown")
+    {
+      volumeFlag = 165;
+    }
+  else if(name=="voxelRight" || name=="VoxelRight")
+    {
+      volumeFlag = 162;
+    }
+  else if(name=="voxelLeft" || name=="VoxelLeft")
+    {
+      volumeFlag = 163;
+    }
+  else if(name=="voxelStraight2" || name=="VoxelStraight2")
+    {
+      volumeFlag = 261;
+    }
+  else if(name=="voxelUp2" || name=="VoxelUp2")
+    {
+      volumeFlag = 264;
+    }
+  else if(name=="voxelDown2" || name=="VoxelDown2")
+    {
+      volumeFlag = 265;
+    }
+  else if(name=="voxelRight2" || name=="VoxelRight2")
+    {
+      volumeFlag = 262;
+    }
+  else if(name=="voxelLeft2" || name=="VoxelLeft2")
+    {
+      volumeFlag = 263;
+    }
+
+
+  return volumeFlag;
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

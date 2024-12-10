@@ -39,7 +39,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-ChemTimeStepAction::ChemTimeStepAction(TimeStepModel timeStepModel) 
+ChemTimeStepAction::ChemTimeStepAction(TimeStepModel timeStepModel)
 : G4UserTimeStepAction()
 {
     if (timeStepModel == fSBS) {
@@ -54,7 +54,7 @@ ChemTimeStepAction::ChemTimeStepAction(TimeStepModel timeStepModel)
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 
-ChemTimeStepAction::ChemTimeStepAction(const ChemTimeStepAction& other) 
+ChemTimeStepAction::ChemTimeStepAction(const ChemTimeStepAction& other)
 : G4UserTimeStepAction(other)
 {}
 
@@ -151,13 +151,13 @@ void ChemTimeStepAction::UserReactionAction(const G4Track& a, const G4Track& b,
         if (_dnaMolecule) {
             G4int copyNo = _dnaMolecule->GetCopyNumber();
             G4int strand = _dnaMolecule->GetStrand();
-            
+
             if((fReactif1==8 || fReactif2 ==8) // Desoxyribose
                 || (fReactif1==9 || fReactif2 ==9)) // Phosphate
                 {
                     base=0;
                 }
-            else 
+            else
                 {
                     base=1;
                 }
@@ -193,7 +193,7 @@ void ChemTimeStepAction::UserReactionAction(const G4Track& a, const G4Track& b,
             G4String msg = "Error in Downcasting";
             G4Exception("ChemTimeStepAction::UserReactionAction", "", FatalException, msg);
         }
-        
+
     }
 
 }

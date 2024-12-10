@@ -43,7 +43,7 @@ AnalysisHandler::AnalysisHandler(): pTLKDoseMax(6.0), pTLKDeltaDose(0.25), fNBp 
     fLEMIVModel = std::make_unique<LEMIVModel>();
     fBelovModel = std::make_unique<BelovModel>();
     fBpForDSB = 10;
-   
+
     if (ParametersParser::Instance()->GetThresholdE() != "") {
         auto e = std::stod(ParametersParser::Instance()->GetThresholdE());
         if (e > 0) fScanDamage->SetThresholdEnergy(e);
@@ -73,7 +73,7 @@ void AnalysisHandler::SetPathToOutputs(std::string path) // Ajout de la fonction
 
 void AnalysisHandler::GetAllDamageAndScanSB()
 {
-    std::map<unsigned int,std::map<unsigned int,std::vector<Damage> > > dmMap; 
+    std::map<unsigned int,std::map<unsigned int,std::vector<Damage> > > dmMap;
     if (ParametersParser::Instance()->WannaLoadDamagesFromSDD()) {
         SDDData sdddata(ParametersParser::Instance()->GetSDDFileName());
         dmMap = sdddata.GetAllDamage();
@@ -96,19 +96,19 @@ void AnalysisHandler::GetAllDamageAndScanSB()
   std::string outName = fPathToOutputs + "/List_DSB.txt"; //Floriane
   std::fstream file;
   file.open(outName.c_str(), std::ios_base::out);
-  file << "0:event \t1:chromosome \t2:domain \t3:genomic position(bp) " << "\t4:x(nm) \t5:y(nm) \t6:z(nm) \t7:complexity" << std::endl;
+  file << "0:event \t1:chromosome \t2:domain \t3:genomic position(bp) " << "\t4:x(nm) \t5:y(nm) \t6:z(nm) \t7:complexity \t8:direct \t9:indirect" << std::endl;
 
 
     //---> print SSB for RITRACKS results
   std::string outName1 = fPathToOutputs + "/List_SSB.txt"; //Floriane
   std::fstream file1;
   file1.open(outName1.c_str(), std::ios_base::out);
-  file1 << "0:event \t1:chromosome \t2:domain \t3:genomic position(bp) " << "\t4:x(nm) \t5:y(nm) \t6:z(nm) \t7:complexity" << std::endl;
+  file1 << "0:event \t1:chromosome \t2:domain \t3:genomic position(bp) " << "\t4:x(nm) \t5:y(nm) \t6:z(nm) \t7:complexity \t8:direct \t9:indirect" << std::endl;
 
 
 
     DamageClassifier damClass;
-    std::map<int,int> ndsbMap, ncdsbMap, nssbMap, nsbMap; 
+    std::map<int,int> ndsbMap, ncdsbMap, nssbMap, nsbMap;
     std::map<int,int> ndirsbMap, ndsbdirMap, ndsbdirIMap, ndsbInMap;
     for (const auto& [chromo,evtDm] : dmMap) {
         for (const auto& [evt, dmV] : evtDm) {
@@ -117,56 +117,66 @@ void AnalysisHandler::GetAllDamageAndScanSB()
             auto classifiedDamage = damClass.MakeCluster(tmpV,fBpForDSB,false);
 
             for (auto it=classifiedDamage.begin(); it!=classifiedDamage.end(); it++){
- 
+
                 //----> only print the DSB
                 if(it->GetClassifiedDamageType()==ClassifiedDamage::ClassifiedDamageType::fDSB){
-            
-                        file << evt << "\t" 
-                                << chromo << "\t" 
+
+                        file << evt << "\t"
+                                << chromo << "\t"
                                 << it-> GetDomain() << "\t"
                                 << it-> GetBpBarycenter() << "\t"
                                 << it-> GetXBarycenter() << "\t"
                                 << it-> GetYBarycenter() << "\t"
                                 << it-> GetZBarycenter() << "\t"
-                                << it-> GetComplexity() << "\n";
+                                << it-> GetComplexity() << "\t"
+                                << it-> GetIsThereDirectComponentContribution() << "\t"
+                                << it-> GetIsThereIndirectComponentContribution() << "\n";
 
                         std::cout << "DSB"
-                                << "\tevt: " << evt  
-                                << "\tChrom: " << chromo 
-                                << "\tDom: " << it->GetDomain() 
+                                << "\tevt: " << evt
+                                << "\tChrom: " << chromo
+                                << "\tDom: " << it->GetDomain()
                                 << "\t(Mbp): " << it-> GetBpBarycenter()/1e6
-                                << "\tx(nm): " << it-> GetXBarycenter() 
+                                << "\tx(nm): " << it-> GetXBarycenter()
                                 << "\ty(nm): " << it-> GetYBarycenter()
-                                << "\tz(nm): " << it-> GetZBarycenter() 
-                                << "\tComplexity: " << it-> GetComplexity() << std::endl;
+                                << "\tz(nm): " << it-> GetZBarycenter()
+                                << "\tComplexity: " << it-> GetComplexity()
+                                << "\tDirect: " << it-> GetIsThereDirectComponentContribution()
+                                << "\tIndirect: " << it-> GetIsThereIndirectComponentContribution()
+                                << std::endl;
                                     }
 
                                 //----> only print the SSB
                 if(it->GetClassifiedDamageType()==ClassifiedDamage::ClassifiedDamageType::fSSB){
-            
-                        file1 << evt << "\t" 
-                                << chromo << "\t" 
+
+                        file1 << evt << "\t"
+                                << chromo << "\t"
                                 << it-> GetDomain() << "\t"
                                 << it-> GetBpBarycenter() << "\t"
                                 << it-> GetXBarycenter() << "\t"
                                 << it-> GetYBarycenter() << "\t"
                                 << it-> GetZBarycenter() << "\t"
-                                << it-> GetComplexity() << "\n";
+                                << it-> GetComplexity() << "\t"
+                                << it-> GetIsThereDirectComponentContribution() << "\t"
+                                << it-> GetIsThereIndirectComponentContribution() << "\n";;
 
                         std::cout << "DSB"
-                                << "\tevt: " << evt  
-                                << "\tChrom: " << chromo 
-                                << "\tDom: " << it->GetDomain() 
+                                << "\tevt: " << evt
+                                << "\tChrom: " << chromo
+                                << "\tDom: " << it->GetDomain()
                                 << "\t(Mbp): " << it-> GetBpBarycenter()/1e6
-                                << "\tx(nm): " << it-> GetXBarycenter() 
+                                << "\tx(nm): " << it-> GetXBarycenter()
                                 << "\ty(nm): " << it-> GetYBarycenter()
-                                << "\tz(nm): " << it-> GetZBarycenter() 
-                                << "\tComplexity: " << it-> GetComplexity() << std::endl;
+                                << "\tz(nm): " << it-> GetZBarycenter()
+                                << "\tComplexity: " << it-> GetComplexity()
+                                << "\tDirect: " << it-> GetIsThereDirectComponentContribution()
+                                << "\tIndirect: " << it-> GetIsThereIndirectComponentContribution()
+                                << std::endl;
 
                                         }
                                     }
 
-			
+
             for (auto dm : dmV) {
 
                 if (dm.GetDamageType() == Damage::Damage::fBackbone ) {
@@ -184,7 +194,7 @@ void AnalysisHandler::GetAllDamageAndScanSB()
                     }
                 }
             }
-			
+
             int NumDSBForThisCluster = damClass.GetNumDSB(classifiedDamage);
             if ( (ndsbMap.find(evt) == ndsbMap.end()) ) {
                 if (NumDSBForThisCluster > 0) ndsbMap.insert({evt,NumDSBForThisCluster});
@@ -243,8 +253,8 @@ void AnalysisHandler::GetAllDamageAndScanSB()
         fNDSBandError.first = xtotal;
         fNDSBandError.second = rms;
     }
-   
-    
+
+
     // cDSB and its error:
     if (ncdsbMap.size() > 0) {
         xxtotal=0, rms = 0, xtotal = 0;
@@ -264,7 +274,7 @@ void AnalysisHandler::GetAllDamageAndScanSB()
         fNsDSBandError.first = fNDSBandError.first -  fNcDSBandError.first;
         if (fNcDSBandError.first > 0) {
             fNsDSBandError.second = (fNsDSBandError.first)*std::sqrt(
-                (fNDSBandError.second/fNDSBandError.first)*(fNDSBandError.second/fNDSBandError.first) + 
+                (fNDSBandError.second/fNDSBandError.first)*(fNDSBandError.second/fNDSBandError.first) +
                 (fNcDSBandError.second/fNcDSBandError.first)*(fNcDSBandError.second/fNcDSBandError.first));
         }
         else fNsDSBandError.second = (fNsDSBandError.first)*(fNDSBandError.second/fNDSBandError.first);
@@ -366,7 +376,7 @@ void AnalysisHandler::GetAllDamageAndScanSB()
         fNindirSBandError.first = fNSBandError.first -  fNdirSBandError.first;
         if (fNdirSBandError.first > 0) {
             fNindirSBandError.second = (fNindirSBandError.first)*std::sqrt(
-                (fNSBandError.second/fNSBandError.first)*(fNSBandError.second/fNSBandError.first) + 
+                (fNSBandError.second/fNSBandError.first)*(fNSBandError.second/fNSBandError.first) +
                 (fNdirSBandError.second/fNdirSBandError.first)*(fNdirSBandError.second/fNdirSBandError.first));
         }
         else fNindirSBandError.second = (fNindirSBandError.first)*(fNSBandError.second/fNSBandError.first);
@@ -431,7 +441,7 @@ void AnalysisHandler::GiveMeSBs()
         else file <<"Propability for indirect damage selection: "
                 <<fScanDamage->GetProbabilityForIndirectSBSelection()*100.<<" (%)\n";
     }
-    
+
     file <<"#======================================================================#\n";
     file << "\n";
     file <<"#Un-normalized results:\n";
@@ -525,7 +535,7 @@ void AnalysisHandler::ApplyDNAModel(std::string dnaModel)
             auto Nirrep = std::stod(ParametersParser::Instance()->GetBELOVNirrep());
             fBelovModel->SetNirrep(Nirrep);
         }
-        double Dz = 1.0; 
+        double Dz = 1.0;
         if (ParametersParser::Instance()->GetBELOVDz() != "") {
             Dz = std::stod(ParametersParser::Instance()->GetBELOVDz());
         }
@@ -585,7 +595,7 @@ void AnalysisHandler::CreateSDD(std::string filename)
             <<"\n"
             <<"***EndOfHeader***;\n"
             <<"\n";
-        
+
         // Data Section
         int prevEvt = -1;
         for (auto &damage : fAllDamage) {
@@ -598,7 +608,7 @@ void AnalysisHandler::CreateSDD(std::string filename)
             ofile<<newEvtFlag<<", "<<damage.GetEvt()<<"; ";
             //Field 3 Chromosome IDs
             ofile<<damage.GetDamageChromatin()<<", "<<damage.GetChromo()<<", "<<0<<", "<<damage.GetStrand()<<"; ";
-            //Field 4, Chromosome position 
+            //Field 4, Chromosome position
             ofile<<damage.GetCopyNb()<<"; ";
             //Field 5, Cause: Unknown = -1, Direct = 0, Indirect = 1
             ofile<<damage.GetCause()<<", "<<0<<", "<<0<<"; ";
@@ -628,15 +638,15 @@ void AnalysisHandler::SetBpForDSB(unsigned int pVal)
 
 void AnalysisHandler::SetParametersForTLKModel(double pLambda1,double pLambda2, double pBeta1, double pBeta2,double pEta)
 {
-    if (ParametersParser::Instance()->GetTLKLambda1() != "") 
+    if (ParametersParser::Instance()->GetTLKLambda1() != "")
         pLambda1 = std::stod(ParametersParser::Instance()->GetTLKLambda1());
-    if (ParametersParser::Instance()->GetTLKLambda2() != "") 
+    if (ParametersParser::Instance()->GetTLKLambda2() != "")
         pLambda2 = std::stod(ParametersParser::Instance()->GetTLKLambda2());
-    if (ParametersParser::Instance()->GetTLKBeta1() != "") 
+    if (ParametersParser::Instance()->GetTLKBeta1() != "")
         pBeta1 = std::stod(ParametersParser::Instance()->GetTLKBeta1());
-    if (ParametersParser::Instance()->GetTLKBeta2() != "") 
+    if (ParametersParser::Instance()->GetTLKBeta2() != "")
         pBeta2 = std::stod(ParametersParser::Instance()->GetTLKBeta2());
-    if (ParametersParser::Instance()->GetTLKEta() != "") 
+    if (ParametersParser::Instance()->GetTLKEta() != "")
         pEta = std::stod(ParametersParser::Instance()->GetTLKEta());
     if (pBeta1 != fTLKModel->GetBeta1()) fTLKModel->SetBeta1(pBeta1);
     if (pBeta2 != fTLKModel->GetBeta2()) fTLKModel->SetBeta2(pBeta2);
@@ -649,15 +659,15 @@ void AnalysisHandler::SetParametersForTLKModel(double pLambda1,double pLambda2, 
 
 void AnalysisHandler::SetParametersForLEMIVModel(double pLoopLength,double pFunrej,double pTfast,double pTslow)
 {
-    if (ParametersParser::Instance()->GetEMIVLoopLength() != "") 
+    if (ParametersParser::Instance()->GetEMIVLoopLength() != "")
         pLoopLength = std::stod(ParametersParser::Instance()->GetEMIVLoopLength());
-    if (ParametersParser::Instance()->GetEMIVFunrej() != "") 
+    if (ParametersParser::Instance()->GetEMIVFunrej() != "")
         pFunrej = std::stod(ParametersParser::Instance()->GetEMIVFunrej());
-    if (ParametersParser::Instance()->GetEMIVTFast() != "") 
+    if (ParametersParser::Instance()->GetEMIVTFast() != "")
         pTfast = std::stod(ParametersParser::Instance()->GetEMIVTFast());
-    if (ParametersParser::Instance()->GetEMIVTSlow() != "") 
+    if (ParametersParser::Instance()->GetEMIVTSlow() != "")
         pTslow = std::stod(ParametersParser::Instance()->GetEMIVTSlow());
-    
+
     if (pLoopLength != fLEMIVModel->GetLoopLength()) fLEMIVModel->SetLoopLength(pLoopLength);
     if (pFunrej != fLEMIVModel->GetFunrej()) fLEMIVModel->SetFunrej(pFunrej);
     if (pTfast != fLEMIVModel->GetTfast()) fLEMIVModel->SetTfast(pTfast);

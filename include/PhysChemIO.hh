@@ -49,6 +49,9 @@ public:
     void NewEvent() override {};
     void WriteInto(const G4String&, std::ios_base::openmode) override {};
     void CloseFile() override {};
+
+    G4int FindVolumeFlag(std::string name);
+    
 private:
     PhysSteppingAction* fSteppingAction;
 };

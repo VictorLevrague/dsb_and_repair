@@ -47,6 +47,8 @@ class ChemTimeStepAction : public G4UserTimeStepAction
 
     void StartProcessing() override;
 
+
+
 private:
 
     G4double fReactif1{0.};

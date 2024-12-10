@@ -99,7 +99,7 @@ G4LogicalVolume* PhysGeoImport::CreateLogicVolume(const G4String& fileName,G4Str
 
     // sort the molecules
     std::sort(fMolecules.begin(), fMolecules.end() );
-   
+
     // Loop on all the parsed molecules
     for(G4int i=0, ie=fMolecules.size(); i<ie; ++i)
     {
@@ -123,7 +123,7 @@ G4LogicalVolume* PhysGeoImport::CreateLogicVolume(const G4String& fileName,G4Str
         if(waterRadius > (0 + tol)*nm)
         {
             G4Material* mat = 0;
-            
+
             mat=materials[materialName];
 
             G4String nameWaterSolid = name+"_water_solid";
@@ -348,7 +348,7 @@ G4VSolid* PhysGeoImport::CreateCutSolid(G4Orb *solidOrbRef,
 
     // Reference volume position
     G4ThreeVector posRef = molRef.fPosition;
-    // Before looping on all the volumes we check if the current 
+    // Before looping on all the volumes we check if the current
     //reference volume overlaps with its container voxel boundaries.
     if(std::abs(posRef.x() ) + radiusRef > fSize/2 // along x
             || std::abs(posRef.y() ) + radiusRef > fSize/2 // along y
@@ -518,10 +518,10 @@ G4VSolid* PhysGeoImport::CreateCutSolid(G4Orb *solidOrbRef,
             G4ThreeVector diff = posTar - posRef;
 
             // Find the intersection point and add to it half the length of the box used to cut
-            G4double d = (std::pow(radiusRef,2)-std::pow(radiusTar,2)+std::pow(distance,2) ) / 
+            G4double d = (std::pow(radiusRef,2)-std::pow(radiusTar,2)+std::pow(distance,2) ) /
                         (2*distance) + solidBox->GetZHalfLength() - tinySpace;
 
-            // If we are in another volume we choose to double the tinySpace to 
+            // If we are in another volume we choose to double the tinySpace to
             //differentiate without ambiguities the inner and outer volume frontiers.
             // (may not be necessary)
             if(in) d -= 2*tinySpace;
@@ -549,7 +549,7 @@ G4VSolid* PhysGeoImport::CreateCutSolid(G4Orb *solidOrbRef,
             rotMat->rotate(theta, rotZAxis);
 
             // If the volume is cutted for the first time
-            if(!isCutted) solidCut = new G4SubtractionSolid("solidCut", solidOrbRef, 
+            if(!isCutted) solidCut = new G4SubtractionSolid("solidCut", solidOrbRef,
             solidBox, rotMat, pos);
 
             // For the other times
@@ -565,7 +565,7 @@ G4VSolid* PhysGeoImport::CreateCutSolid(G4Orb *solidOrbRef,
 
     // Otherwise, we return the original volume
     else return solidOrbRef;
-    
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -787,13 +787,13 @@ G4LogicalVolume* PhysGeoImport::CreateNucleusLogicVolume(const G4String& fileNam
                 fNucleusVolume = 4.0*pi*r3/3.0;
             } else if (fNucleusType == "EllipticCylinder") {
             	G4float semiX, semiY, semiZ;
-		
+
                 issLine >> semiX >> semiY >> semiZ;
-		
+
                 semiX *= fFactor*nm;
                 semiY *= fFactor*nm;
                 semiZ *= fFactor*nm;
-		
+
                 fNucleusData["SemiX"] = semiX;
                 fNucleusData["SemiY"] = semiY;
                 fNucleusData["SemiZ"] = semiZ;
@@ -815,7 +815,7 @@ G4LogicalVolume* PhysGeoImport::CreateNucleusLogicVolume(const G4String& fileNam
                 fNucleusVolume = 4.0*pi*r3/3.0;
             } else {
                 G4String msg =fNucleusType+" is not registered.";
-                G4Exception("PhysGeoImport::CreateNucleusLogicVolume()", 
+                G4Exception("PhysGeoImport::CreateNucleusLogicVolume()",
                 "Geo_InputFile_Unknown_Nucleus", FatalException, msg);
             }
 
@@ -828,7 +828,7 @@ G4LogicalVolume* PhysGeoImport::CreateNucleusLogicVolume(const G4String& fileNam
     if(!isNucleusBuild)
     {
         G4String msg = "Nucleus data were not found for "+fNucleusType;
-        G4Exception("PhysGeoImport::CreateNucleusLogicVolume()", 
+        G4Exception("PhysGeoImport::CreateNucleusLogicVolume()",
         "Geo_InputFile_Unknown_Nucleus", FatalException, msg);
     }
 
@@ -873,7 +873,7 @@ std::vector<Voxel>* PhysGeoImport::CreateVoxelsData(const G4String& fileName)
             voxt == Voxel::Up || voxt == Voxel::Down) return ChromatinType::fHeterochromatin;
         else if (voxt == Voxel::Straight2 || voxt == Voxel::Left2 || voxt == Voxel::Right2 ||
             voxt == Voxel::Up2 || voxt == Voxel::Down2) return ChromatinType::fEuchromatin;
-        else return ChromatinType::fUnspecified;   
+        else return ChromatinType::fUnspecified;
     };
     // Read the file line per line
     while(std::getline(nucleusFile, line) )
@@ -930,36 +930,37 @@ std::vector<Voxel>* PhysGeoImport::CreateVoxelsData(const G4String& fileName)
             z_nm = z;//Mathieu
 
             z *= fFactor*nm;
-            
+
             G4double xx;
             issLine >> xx;
-            
+
             G4double yx;
             issLine >> yx;
-            
+
             G4double zx;
             issLine >> zx;
-            
+
             G4double xy;
             issLine >> xy;
-            
+
             G4double yy;
             issLine >> yy;
-            
+
             G4double zy;
             issLine >> zy;
-            
+
             G4double xz;
             issLine >> xz;
-            
+
             G4double yz;
             issLine >> yz;
-            
+
             G4double zz;
             issLine >> zz;
-            
-            std::array<G4int,3> xyz = {G4int(x_nm+8000),G4int(y_nm+8000),G4int(z_nm+8000)};// Mathieu coordonnées stockes dans grid, il nous faut etre sure d'avoir des coordonnees positives (translation de la moitié du world) 
+
+            std::array<G4int,3> xyz = {G4int(x_nm+8000),G4int(y_nm+8000),G4int(z_nm+8000)};// Mathieu coordonnées stockes dans grid, il nous faut etre sure d'avoir des coordonnees positives (translation de la moitié du world)
             g_map_voxel.insert({xyz,voxelCopyNumber});
+            g_map_voxel2.insert({voxelCopyNumber, name}); //voxel_name
             G4RotationMatrix* rot = new G4RotationMatrix(G4ThreeVector(xx,xy,xz),
             G4ThreeVector(yx,yy,yz),G4ThreeVector(zx,zy,zz));
 
@@ -1012,13 +1013,13 @@ std::vector<Voxel>* PhysGeoImport::CreateVoxelsData(const G4String& fileName)
                 G4Exception("PhysGeoImport::CreateVoxelsData", "", FatalException, msg, "");
             }
 
-            voxels->push_back(Voxel(voxelCopyNumber, chromoCpN, domainCpN, type, 
+            voxels->push_back(Voxel(voxelCopyNumber, chromoCpN, domainCpN, type,
             G4ThreeVector(x,y,z), rot) );
             fTotalNbBpPlacedInGeo += fVoxelNbBpMap[name];
             fTotalNbHistonePlacedInGeo += fVoxelNbHistoneMap[name];
             voxelCopyNumber++;
             auto chromatintype =  whatchromatintype(type);
-            if (fChromatinTypeCount.find(chromatintype) == fChromatinTypeCount.end()) 
+            if (fChromatinTypeCount.find(chromatintype) == fChromatinTypeCount.end())
                 fChromatinTypeCount.insert({chromatintype,1});
             else fChromatinTypeCount[chromatintype]++;
         }

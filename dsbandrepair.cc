@@ -64,7 +64,7 @@
 
 void CheckingSomeFilesAndFolders();
 G4String ExtractChemListNameFromMacroFile(G4String);
-G4String CopyNumber;
+G4String id_job;
 G4int is_pbc_activated;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -79,13 +79,13 @@ int main(int argc,char** argv)
         prompt += "G4MPI";
         prompt += "[40;31m(%s)[40;36m[%/][00;30m:";
         session-> SetPrompt(prompt);
-#else 
+#else
         G4UIExecutive* ui = nullptr;
         if ( argc == 1 ) { ui = new G4UIExecutive(argc, argv); }
 #endif // USE_MPI
-    if (argc < 2) {
-        G4cerr<<"====>> Wrong input. To run Physgeo, type : ./dsbandrepair macrofile\n"
-            <<"To run Chem_geo, type : ./dsbandrepair macrofile chem"<<G4endl;
+    if (argc < 6) {
+        G4cerr<<"====>> Wrong input. To run Physgeo, type : ./dsbandrepair macrofile phys id_job output_path bool_pbc(0 or 1)\n"
+              <<"To run Chem_geo, type : ./dsbandrepair macrofile chem id_job output_path bool_pbc(0 or 1)"<<G4endl;
 #ifdef USE_MPI
         delete g4MPI;
 #endif // USE_MPI
@@ -93,9 +93,9 @@ int main(int argc,char** argv)
     }
     G4String macrofileName = argv[1];
         const G4String rmode = argv[2];
-        CopyNumber = argv[3]; // Ajout d'un argument en plus CopyNumber correspondant au nombre de jobs envoyes (Mathieu)
+        id_job = argv[3];
         std::string pathToFiles = argv[4];
-        is_pbc_activated = G4UIcommand::ConvertToInt(argv[5]); // Ajout d'un nouvel argument en quatrieme position indiquant si on utilise pbc ou pas [String au lieu de int]  (Mathieu)
+        is_pbc_activated = G4UIcommand::ConvertToInt(argv[5]);
         if (rmode == "phys") gRunMode = RunningMode::Phys;
         if (rmode == "chem") gRunMode = RunningMode::Chem;
         if (rmode == "chem") is_pbc_activated = 0;
@@ -112,11 +112,11 @@ int main(int argc,char** argv)
 #ifdef USE_MPI
         if (g4MPI->GetRank() == 0 ){
             //CheckingSomeFilesAndFolders();
-            InformationKeeper::Instance()->SetFolderName(CopyNumber); // Remplacement de CheckingSomeFilesAndFolders par SetFolderName de InformationKeeper (Mathieu) pour MPI
+            InformationKeeper::Instance()->SetFolderName(id_job); // Remplacement de CheckingSomeFilesAndFolders par SetFolderName de InformationKeeper (Mathieu) pour MPI
         }
-#else   
+#else
         //CheckingSomeFilesAndFolders();
-        std::string fPathToOutputs = pathToFiles + "/Copy" + CopyNumber; 
+        std::string fPathToOutputs = pathToFiles + "/Copy" + id_job;
         InformationKeeper::Instance()->SetFolderName(fPathToOutputs); // Remplacement de CheckingSomeFilesAndFolders par SetFolderName de InformationKeeper (Mathieu)
 #endif // USE_MPI
         auto* runManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::Default);
@@ -124,17 +124,17 @@ int main(int argc,char** argv)
         G4int threadNumber= 1;
         runManager-> SetNumberOfThreads(threadNumber);
 #endif  // G4MULTITHREADED
-        
+
         DetectorConstruction* detector = new DetectorConstruction(1.,0,false);
         runManager->SetUserInitialization(detector);
-        
+
         PhysicsList* physList = new PhysicsList("Periodic", true, true, true, false, is_pbc_activated); // Modifcation de l'appel de la physicList en prenant en compte les variables de pbc (Mathieu)
         runManager->SetUserInitialization(physList);
 
         PhysActionInitialization* actionIni = new PhysActionInitialization();
         runManager->SetUserInitialization(actionIni);
         InformationKeeper::Instance()->SetTimeStart();
-#ifdef USE_MPI 
+#ifdef USE_MPI
         // extra worker (for collecting ntuple data)
         if ( g4MPI->IsExtraWorker() ) {
             G4cout << "Set extra worker" << G4endl;
@@ -142,13 +142,13 @@ int main(int argc,char** argv)
             g4MPI->SetExtraWorker(new G4MPIextraWorker(runAction));
         }
         session-> SessionStart();
-        
+
 
         if (g4MPI->GetRank() == 0 ){
-            InformationKeeper::Instance()->WritePhysGeo(CopyNumber); // Ajout de la variable CopyNumber pour MPI (Mathieu)
+            InformationKeeper::Instance()->WritePhysGeo(id_job); // Ajout de la variable id_job pour MPI (Mathieu)
         }
         delete g4MPI;
-#else 
+#else
         // Get the pointer to the User Interface manager
         G4UImanager* UImanager = G4UImanager::GetUIpointer();
         // Process macro or start UI session
@@ -157,20 +157,20 @@ int main(int argc,char** argv)
             G4String command = "/control/execute ";
             UImanager->ApplyCommand(command+macrofileName);
         }
-        InformationKeeper::Instance()->WritePhysGeo(fPathToOutputs); // Ajout de la variable CopyNumber (Mathieu), remplacement de cette variable par fPathToOutputs
+        InformationKeeper::Instance()->WritePhysGeo(fPathToOutputs); // Ajout de la variable id_job (Mathieu), remplacement de cette variable par fPathToOutputs
         time_t time_end;
         time(&time_end);
         G4cout<<"temps de simulation" << difftime(time_end,timeStart)/60 << " minutes" << G4endl;
 
 #endif // USE_MPI
         delete runManager;
-    } 
+    }
     //Début du module chimie (Mathieu)
     else if (gRunMode == RunningMode::Chem) {
 
-        std::string MyFileorMyFolder = pathToFiles + "/Copy" + CopyNumber; // Mathieu Modification
+        std::string MyFileorMyFolder = pathToFiles + "/Copy" + id_job; // Mathieu Modification
 
-        std::string inputFileorFolder = pathToFiles + "/Copy" + CopyNumber + "/chem_input";
+        std::string inputFileorFolder = pathToFiles + "/Copy" + id_job + "/chem_input";
 
         InformationKeeper::Instance()->SetFolderName(MyFileorMyFolder); // Mathieu Modification
 
@@ -190,7 +190,7 @@ int main(int argc,char** argv)
             size_t filesTobeProcessedSlave = (size_t)(
                 std::floor(G4double(totalNumberofFilesVector.size())/G4double(numberofRanks)));
             // note: should not use "std::ceil"
-            size_t filesTobeProcessedMaster = 
+            size_t filesTobeProcessedMaster =
                 totalNumberofFilesVector.size() - (numberofRanks-1)*filesTobeProcessedSlave;
             if (g4MPI->IsMaster()) {
                 for (size_t ii=0; ii< filesTobeProcessedMaster; ii++) {
@@ -205,7 +205,7 @@ int main(int argc,char** argv)
             }
             G4cout<<"-----> "<<numberOfFilesTobeProcessedVector.size()
                     <<" files will be processed on rank #"<<g4MPI->GetRank()<<G4endl;
-#else 
+#else
             numberOfFilesTobeProcessedVector = totalNumberofFilesVector;
 #endif
             if (totalNumberofFilesVector.size() == 0) {
@@ -221,19 +221,19 @@ int main(int argc,char** argv)
             if (p.has_stem()) {
                 outputFileName = p.stem().string();
             } else outputFileName = inputFileorFolder;
-        } 
+        }
         else G4cout<<"===>>dsbandrepair: "<<p.string()<<" is Not Directory or file !!!"<<G4endl;
-        
+
         //------------------------------------------
         // Initialization classes
         //------------------------------------------
 
         auto* runManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::Serial);
-        
+
         G4DNAChemistryManager::Instance()->SetChemistryActivation(true);
 
         //ChemNtupleManager ntupleManager; //Mathieu
-        outputFileName = pathToFiles+"/Copy"+CopyNumber+"/chem_output/chem_output.root";
+        outputFileName = pathToFiles+"/Copy"+id_job+"/chem_output/chem_output.root";
 
         ChemNtupleManager::Instance()->SetFileName(outputFileName);
         ChemNtupleManager::Instance()->Book();
@@ -255,7 +255,7 @@ int main(int argc,char** argv)
 
         ChemActionInitialization* actionIni = new ChemActionInitialization(physList); // Mathieu
         runManager->SetUserInitialization(actionIni);
-        
+
         //get the pointer to the User Interface manager
         G4UImanager* UI = G4UImanager::GetUIpointer();
         G4String command = "/control/execute ";
@@ -276,7 +276,7 @@ int main(int argc,char** argv)
                 detector->InsertMoleculeInWorld();
                 UI->ApplyCommand("/run/beamOn 1");
                 nprocessedfiles++;
-                if (nprocessedfiles == 1 || 
+                if (nprocessedfiles == 1 ||
                     nprocessedfiles == numberOfFilesTobeProcessedVector.size() ||
                     0 == (nprocessedfiles % ncounts)) {
                                 time_t time_end;
@@ -288,7 +288,7 @@ int main(int argc,char** argv)
 #endif
                           <<"!!!"<<" "<< difftime(time_end,timeStart)/60 << " minutes"<<G4endl;
                 }
-            }   
+            }
         } else {
             UI->ApplyCommand("/run/beamOn 1");
         }

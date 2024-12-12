@@ -3,7 +3,8 @@
 #
 cmake_minimum_required(VERSION 3.16...3.27)
 project(runAna)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)           # Set C++ standard to C++20
+set(CMAKE_CXX_STANDARD_REQUIRED ON)  # Enforce the specified standard
 
 # Find ROOT package
 find_package(ROOT REQUIRED)

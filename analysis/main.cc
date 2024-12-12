@@ -31,6 +31,7 @@
 #include <iostream>
 #include "ParametersParser.hh"
 #include "SDDData.hh"
+
 int main(int argc,char** argv)
 {
     std::cout  <<"#####################################################################\n"
@@ -44,8 +45,13 @@ int main(int argc,char** argv)
         std::string macrofile = argv[1];
         parParser->LoadParameters(macrofile);
     }
-    
-    std::string pathToOutputs = argv[2]; // Ajout d'un argument d'entrée path pour l'output (Mathieu) chemin en dur dans l'argument d'entree 
+
+    if (argc < 4)
+    {
+      std::cerr<<"====>> Wrong input. To run analysis, type : ./runAna macrofile output_Copy"<<std::endl;
+    }
+
+    std::string pathToOutputs = argv[2]; // Ajout d'un argument d'entrée path pour l'output (Mathieu) chemin en dur dans l'argument d'entree
 
 
     AnalysisHandler aAna; // creer les stucture basés sur ScanDamage.cc (Mathieu)
@@ -55,7 +61,7 @@ int main(int argc,char** argv)
     if (!parParser->WannaLoadDamagesFromSDD()) {
         aAna.CreateSDD(("SDDformat_"+parParser->GetOutputName()));
     }
-    
+
     if (parParser->UseTLK()) aAna.ApplyDNAModel("TLK");
     if (parParser->UseLEMIV()) aAna.ApplyDNAModel("LEMIV");
     if (parParser->UseBelov()) aAna.ApplyDNAModel("BELOV");

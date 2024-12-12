@@ -40,13 +40,17 @@ To build dsbandrepair, in the terminal, use:
 *  shell$ make  (or 'make -jN' with N = 1,2,3 .... )
 
 And to run:
-*  shell$ ./dsbandrepair dsbandrepair.in
+*  shell$ mkdir output/
+*  shell$ mkdir output/Copy1
+*  shell$ mkdir output/Copy1/phys_output
+*  shell$ ./dsbandrepair dsbandrepair.in phys 1 output 0(or 1)
 
 where dsbandrepair.in is a macrofile. User can change it to his/her own macrofile.
 
 Note that: dsbandrepair was designed in a modular way that offers users to run physical stage chemcal stage independently. By default, dsbandrepair runs in physical stage mode. To run chemical stage, use :
-*  shell$ rm -rf chem_ouput
-*  shell$ ./dsbandrepair chem.in chem 
+*  shell$ mkdir output/Copy1/chem_input
+*  shell$ mkdir output/Copy1/chem_output
+*  shell$ ./dsbandrepair chem.in chem 1 output/ 0(or 1)
 
 where chem.in is a macrofile. User can change it to his/her own macrofile.
 
@@ -80,12 +84,10 @@ To run "analysis" module, in the "build" directory, build this module with the c
 * cd ../
 
 At this point, user can launch the analysis module:
-* shell$  ./analysis/runAna  
-or
-* shell$  ./analysis/runAna macrofile
+* shell$  ./analysis/runAna macrofile output_simulations
 
 where the macro file allows user to interact with the code. 
-Example: ./analysis/runAna analysis.in 
+Example: ./analysis/runAna analysis.in output/Copy1
 
 ## Outputs
 By default, the output of "Analysis" module will be written in 4 different text files:

@@ -43,12 +43,12 @@ And to run:
 *  shell$ mkdir output/
 *  shell$ mkdir output/Copy1
 *  shell$ mkdir output/Copy1/phys_output
+*  shell$ mkdir output/Copy1/chem_input
 *  shell$ ./dsbandrepair dsbandrepair.in phys 1 output 0(or 1)
 
 where dsbandrepair.in is a macrofile. User can change it to his/her own macrofile.
 
 Note that: dsbandrepair was designed in a modular way that offers users to run physical stage chemcal stage independently. By default, dsbandrepair runs in physical stage mode. To run chemical stage, use :
-*  shell$ mkdir output/Copy1/chem_input
 *  shell$ mkdir output/Copy1/chem_output
 *  shell$ ./dsbandrepair chem.in chem 1 output/ 0(or 1)
 

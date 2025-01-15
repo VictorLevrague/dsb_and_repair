@@ -25,6 +25,6 @@ for i in `cat $jobname`
 do
     mkdir -p $path/log/log${particle_energy}_MeV/splitIrradiation${irradiation_id}/split_chem
     find $path/log/log${particle_energy}_MeV/splitIrradiation${irradiation_id}/split_chem -type f -delete
-	sbatch -J log${particle_energy}_MeV/splitIrradiation${irradiation_id}/split_chem/${job_prefix} batch_parameters_chem_dsb_and_repair.sh $i $copy_nb $particle_energy $irradiation_id
+	sbatch -J $path/log${particle_energy}_MeV/splitIrradiation${irradiation_id}/split_chem/${job_prefix} batch_parameters_chem_dsb_and_repair.sh $i $copy_nb $particle_energy $irradiation_id
 	((copy_nb++))
 done

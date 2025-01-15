@@ -8,5 +8,5 @@ N=10;
 
 for i in $(seq 0 $N)
 do
-    sbatch -J log${particle_energy}_MeV/splitIrradiation${irradiation_id}/${job_prefix} batch_parameters_analysis_dsb_and_repair.sh macros/analysis.in $i $particle_energy $irradiation_id
+    sbatch -J $path/log${particle_energy}_MeV/splitIrradiation${irradiation_id}/${job_prefix} batch_parameters_analysis_dsb_and_repair.sh $path/macros/analysis.in $i $particle_energy $irradiation_id
 done

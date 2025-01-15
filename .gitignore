@@ -1,2 +1,4 @@
 build/
 dnafabric_geometries/
+analysis/build
+analysis/runAna

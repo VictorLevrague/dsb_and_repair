@@ -6,15 +6,16 @@
 
 export path=/sps/gdrmi2b/levrague/dsb_and_repair
 
-N=10;
-export particle_energy="C_290"
-export nb_particles=125
+N=1000;
+export particle_energy="H_150"
+export nb_particles=2976
 export irradiation_id=1 #1 (HC nucleus) or 2 (nucleus with decompaction)
+export dose=1 #Gy
 
 N=`expr "$N" - 1`;
 
-export split_folder_name=$path/split_phys/split${particle_energy}_MeV/splitIrradiation${irradiation_id}
-export output_folder_name=$path/output/output${particle_energy}_MeV/outputIrradiation${irradiation_id}
+export split_folder_name=$path/split_phys/split${particle_energy}_MeV/splitIrradiation${irradiation_id}/split_${dose}Gy
+export output_folder_name=$path/output/output${particle_energy}_MeV/outputIrradiation${irradiation_id}/output_${dose}Gy
 
 mkdir -p $split_folder_name
 mkdir -p $output_folder_name

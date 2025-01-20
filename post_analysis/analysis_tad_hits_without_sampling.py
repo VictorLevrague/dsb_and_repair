@@ -32,7 +32,7 @@ def write_tad_hit_file(name_file, tad_hits):
 
 def convert_damage_file_in_tad_id_dict(damage_type):
     damage_file_dict = defaultdict(int)
-    damage_file_name = f"{PATH}/post_analysis/analysis_output/{ION}/List_{damage_type}.txt"
+    damage_file_name = f"{PATH}/post_analysis/analysis_output/{ION}/Irradiation1/{DOSE}Gy/List_{damage_type}.txt"
     with open(damage_file_name, "r") as damage_file:
         next(damage_file)
         for line in damage_file:

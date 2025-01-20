@@ -15,6 +15,8 @@ NB_SIMULATION_SAMPLES = 1000
 SEED = 42
 
 ion = "O_350_MeV"
+IRRADIATION_ID = 1 #1 (HC nucleus) or 2 (decompacted nucleus)
+DOSE = 1 #Gy
 
 def nb_ions_poisson(dose):
     AREA = 16 * 16 #µm²
@@ -45,7 +47,7 @@ def compute_nb_damage(damage_type):
 
 def convert_damage_file_in_dict(damage_type):
     damage_file_dict = defaultdict(int)
-    damage_file_name = f"{PATH}/post_analysis/analysis_output/{ion}/List_{damage_type}.txt"
+    damage_file_name = f"{PATH}/post_analysis/analysis_output/{ion}/Irradiation{IRRADIATION_ID}/{DOSE}Gy/List_{damage_type}.txt"
     with open(damage_file_name, "r") as damage_file:
         next(damage_file)
         for line in damage_file:

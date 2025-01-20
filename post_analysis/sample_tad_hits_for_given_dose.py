@@ -54,7 +54,7 @@ def compute_tad_hit_array_for_one_sample(damage_file_dict_ssb, damage_file_dict_
 
 def convert_damage_file_in_tad_id_dict(damage_type):
     damage_file_dict = defaultdict(lambda: np.array([]))
-    damage_file_name = f"{PATH}/post_analysis/analysis_output/{ION}/List_{damage_type}.txt"
+    damage_file_name = f"{PATH}/post_analysis/analysis_output/{ION}/Irradiation{IRRADIATION_ID}/{DOSE}Gy/List_{damage_type}.txt"
     with open(damage_file_name, "r") as damage_file:
         next(damage_file)
         for line in damage_file:

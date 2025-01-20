@@ -14,11 +14,11 @@
 /dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelStraight.fab2g4dna
 /dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelUp.fab2g4dna
 
-/dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelDown2.fab2g4dna
-/dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelLeft2.fab2g4dna
-/dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelRight2.fab2g4dna
-/dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelStraight2.fab2g4dna
-/dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelUp2.fab2g4dna
+#/dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelDown2.fab2g4dna
+#/dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelLeft2.fab2g4dna
+#/dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelRight2.fab2g4dna
+#/dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelStraight2.fab2g4dna
+#/dsbandrepair/det/voxeldefinitionfile       /sps/gdrmi2b/levrague/dsb_and_repair/dnafabric_geometries/VoxelUp2.fab2g4dna
 
 /random/setSeeds 123456789 1
 #
@@ -43,10 +43,10 @@
 #
 #=======================  SET PARTICLE'S INFO       ======================
 # 
-#/gps/particle proton
-/gps/particle ion
-/gps/ion 6 12
-/gps/energy 3480 MeV
+/gps/particle proton
+#/gps/particle ion
+#/gps/ion 6 12
+/gps/energy 150 MeV
 
 #
 #=======================  SET EVENTS and START A RUN  ======================

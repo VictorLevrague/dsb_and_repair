@@ -7,9 +7,10 @@ ION_ENERGY = "O_350_MeV"
 NB_OUTPUT_FOLDER = 1000
 PATH = "/sps/gdrmi2b/levrague/dsb_and_repair"
 IRRADIATION_ID = 1 #1 (HC nucleus) or 2 (decompacted nucleus)
+DOSE = 1 #Gy
 
 def file_analysis():
-    output_folder = f"{PATH}/output/output{ION_ENERGY}/outputIrradiation{IRRADIATION_ID}/"
+    output_folder = f"{PATH}/output/output{ION_ENERGY}/outputIrradiation{IRRADIATION_ID}/Output_{DOSE}Gy/"
     read_dsb_doses(output_folder)
 
 def read_dsb_doses(output_folder):

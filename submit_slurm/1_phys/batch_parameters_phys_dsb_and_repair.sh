@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #SBATCH --job-name=DSB
-#SBATCH --output="/sps/gdrmi2b/levrague/dsb_and_repair/log/%x_%j_%N_%a.out"
+#SBATCH --output="/sps/gdrmi2b/levrague/dsb_and_repair/log/%x_%j_%N.out"
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 1
 #SBATCH --mem 5000

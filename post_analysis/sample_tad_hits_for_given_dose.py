@@ -23,9 +23,9 @@ def nb_ions_poisson(dose):
     return poisson.rvs(lambda_poisson)
 
 def write_tad_hit_files_with_sampling():
-    damage_file_dict_ssb = convert_damage_file_in_tad_id_dict("SSB")
-    damage_file_dict_dsb = convert_damage_file_in_tad_id_dict("DSB")
     for dose in DOSES:
+        damage_file_dict_ssb = convert_damage_file_in_tad_id_dict("SSB", dose)
+        damage_file_dict_dsb = convert_damage_file_in_tad_id_dict("DSB", dose)
         output_folder = f"{PATH}/post_analysis/tad_hits/{ION}/{dose}Gy"
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
@@ -52,9 +52,9 @@ def compute_tad_hit_array_for_one_sample(damage_file_dict_ssb, damage_file_dict_
         tad_hits_sample_dict["DSB"] = np.append(tad_hits_sample_dict["DSB"], damage_file_dict_dsb[(simulation_id, track_id)])
     return tad_hits_sample_dict
 
-def convert_damage_file_in_tad_id_dict(damage_type):
+def convert_damage_file_in_tad_id_dict(damage_type, dose):
     damage_file_dict = defaultdict(lambda: np.array([]))
-    damage_file_name = f"{PATH}/post_analysis/analysis_output/{ION}/Irradiation{IRRADIATION_ID}/{DOSE}Gy/List_{damage_type}.txt"
+    damage_file_name = f"{PATH}/post_analysis/analysis_output/{ION}/Irradiation{IRRADIATION_ID}/{dose}Gy/List_{damage_type}.txt"
     with open(damage_file_name, "r") as damage_file:
         next(damage_file)
         for line in damage_file:

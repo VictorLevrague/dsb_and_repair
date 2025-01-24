@@ -9,21 +9,22 @@ import os.path
 # PATH = "/sps/gdrmi2b/levrague/dsb_and_repair"
 PATH = "/home/levrague/Documents/PostDoc/dsb_and_repair"
 IRRADIATION_ID = 1 #1 (HC nucleus) or 2 (decompacted nucleus)
-NB_TRACKS_1_GY_DICT = {"H_250": 4390, "H_150": 3166, "He_250": 1110, "C_290": 135,"O_350": 84, "O_55": 24, "Si_170": 17, "Ti_300": 10, "Fe_600": 11,
+NB_TRACKS_1_GY_DICT = {"Cs_137": 741592, "H_250": 4390, "H_150": 3166, "He_250": 1110, "C_290": 135,"O_350": 84, "O_55": 24, "Si_170": 17, "Ti_300": 10, "Fe_600": 11,
                        "Fe_450": 9, "Fe_300": 7}
-NB_SIMULATED_TRACKS = {"H_250": 4142, "H_150": 2976,"He_250": 1035, "C_290": 125,"O_350": 78,"O_55": 22, "Si_170": 17, "Ti_300": 10,
+NB_SIMULATED_TRACKS = {"Cs_137": 738000, "H_250": 4142, "H_150": 2976,"He_250": 1035, "C_290": 125,"O_350": 78,"O_55": 22, "Si_170": 17, "Ti_300": 10,
                        "Fe_600": 9, "Fe_450": 8, "Fe_300": 7}
-ION_LET = {"H_250": 0.39, "H_150": 0.54, "He_250": 1.54, "C_290": 12.74,
+ION_LET = {"Cs_137":0.2, "H_250": 0.39, "H_150": 0.54, "He_250": 1.54, "C_290": 12.74,
            "O_350": 20.47, "O_55": 72.84, "Si_170": 96.6, "Ti_300": 168.06,
            "Fe_600": 170.62, "Fe_450": 191.57, "Fe_300": 234.71} #keV/µm
 SIMULATED_DOSE = 1 #Gy
-SAMPLE_DOSES = [1] #Gy
-# SAMPLE_DOSES = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1] #Gy
+#SAMPLE_DOSES = [1] #Gy
+SAMPLE_DOSES = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1] #Gy
 NB_SIMULATIONS = 1000
 NB_SIMULATION_SAMPLES = 1000
 SEED = 42
-IONS = ["H_250MeV_EC", "H_250MeV_HC", "He_250MeV_EC", "He_250MeV_HC",
-        "O_350MeV_EC", "O_350MeV_HC",
+# "Cs_137_EC", "Cs_137_HC"
+IONS = ["H_250MeV_EC", "H_250MeV_HC",
+        "He_250MeV_EC", "He_250MeV_HC", "O_350MeV_EC", "O_350MeV_HC",
         "O_55MeV_EC", "O_55MeV_HC", "Si_170MeV_EC", "Si_170MeV_HC",
         "Ti_300MeV_EC", "Ti_300MeV_HC", "Fe_600MeV_EC", "Fe_600MeV_HC",
         "Fe_450MeV_EC", "Fe_450MeV_HC", "Fe_300MeV_EC", "Fe_300MeV_HC"]
@@ -97,5 +98,7 @@ if __name__ == '__main__':
             output_dict["SSB_error"] = np.append(output_dict["SSB_error"], ssb_error[dose])
             output_dict["DSB"] = np.append(output_dict["DSB"], dsb[dose])
             output_dict["DSB_error"] = np.append(output_dict["DSB_error"], dsb_error[dose])
+            print(f"{dose} is analysed")
+        print(f"{ion} is analysed\n")
     output_df = pd.DataFrame(output_dict)
     output_df.to_csv("damage_sample_analysis.csv", index=False)

@@ -5,7 +5,7 @@ export JOB_PREFIX="DSB"
 export PARTICLE_ENERGY="O_350"
 export IRRADIATION_ID=2 #1 or 2
 export DOSE=1 #Gy
-N=10;
+N=1000;
 
 for i in $(seq 0 $N)
 do

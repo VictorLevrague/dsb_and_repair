@@ -27,10 +27,12 @@ done
 
 export copy_nb=0
 
+export log_dir=$path/log/log${particle_energy}_MeV/splitIrradiation${irradiation_id}/split_${dose}Gy/split_phys
+
+mkdir -p $log_dir
+find $log_dir -type f -delete
+
 for i in `cat $jobname`
-do
-    mkdir -p $PATH/log/log${PARTICLE_ENERGY}_MeV/splitIrradiation${IRRADIATION_ID}/split_${DOSE}Gy/split_phys
-    find $PATH/log/log${PARTICLE_ENERGY}_MeV/splitIrradiation${IRRADIATION_ID}/split_${DOSE}Gy/split_phys -type f -delete
-	sbatch -J log${PARTICLE_ENERGY}_MeV/splitIrradiation${IRRADIATION_ID}/split_${DOSE}Gy/split_phys/${job_prefix} $PATH/submit_slurm/1_phys/batch_parameters_phys_dsb_and_repair.sh $i $copy_nb $PARTICLE_ENERGY $IRRADIATION_ID $DOSE
+    sbatch -J ${particle_energy} --output=${log_dir}/${particle_energy}_${copy_nb}.out $path/submit_slurm/1_phys/batch_parameters_phys_dsb_and_repair.sh $i $copy_nb $particle_energy $irradiation_id $dose
 	((copy_nb++))
 done

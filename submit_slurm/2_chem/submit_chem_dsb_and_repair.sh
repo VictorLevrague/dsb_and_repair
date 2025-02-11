@@ -1,7 +1,7 @@
 #!/bin/sh
 export path=/sps/gdrmi2b/levrague/dsb_and_repair
 
-export particle_energy="H_150"
+export particle_energy="C_290"
 export irradiation_id=1 #1 or 2
 export dose=1 #Gy
 
